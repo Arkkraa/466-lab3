@@ -96,9 +96,9 @@ def getData(fp):
       graph.addNode(nodes[2])
 
       if int(nodes[1]) >= int(nodes[3]):
-         graph.addDestination(nodes[2], nodes[0])
+         graph.addEdge(nodes[2], nodes[0])
       else:
-         graph.addDestination(nodes[0], nodes[2])
+         graph.addEdge(nodes[0], nodes[2])
 
    return graph
 
