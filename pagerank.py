@@ -22,8 +22,14 @@ class PageRank:
          self.destinations[node] = []
          self.sources[node] = []
 
-   def addDestination(self, source, target):
+   def addEdge(self, source, target):
       """Add a new edge to the graph"""
+      if source not in self.degree:
+         self.addNode(source)
+
+      if target not in self.degree:
+         self.addNode(target)
+
       self.destinations[source].append(target)
       self.degree[source] = self.degree.get(source,0) + 1
 
@@ -105,30 +111,6 @@ if __name__ == '__main__':
 
    print 'pageRanks:'
    print graph.getPageRank()
-
-
-   """
-   graph.addNode('a')
-   graph.addNode('b')
-   graph.addNode('c')
-   graph.addNode('d')
-
-   graph.addDestination('a', 'b')
-   graph.addDestination('a', 'd')
-   graph.addDestination('a', 'c')
-
-   graph.addDestination('b', 'a')
-   graph.addDestination('b', 'd')
-
-   graph.addDestination('c', 'c')
-
-   graph.addDestination('d', 'b')
-   graph.addDestination('d', 'c')
-   graph.printGraph()
-   
-   print 'pageRanks:'
-   print graph.getPageRank()
-   """
 
 
 
