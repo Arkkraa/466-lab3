@@ -4,6 +4,7 @@ import sys
 import re
 import string
 import pprint
+import time
 
 class PageRank:
    """A class that represents a graph used for pagerank"""
@@ -54,9 +55,9 @@ class PageRank:
       epsilon = 0.00001
       sum = 0
       for node in newPageRank:
-         sum += (newPageRank[node] - oldPageRank[node]) ** 2 
+         sum += math.fabs(newPageRank[node] - oldPageRank[node])
       
-      return math.sqrt(sum) < epsilon
+      return sum < epsilon
 
    def getPageRank(self):
       """Return the number of iterations it took to converge as well as the 
@@ -80,7 +81,7 @@ class PageRank:
          if (self.goodEnough(newPageRank, self.rank)):
             self.rank = newPageRank
             self.rank = sorted(self.rank.items(), key=lambda x: x[1], reverse=True)[:40]
-            return self.rank
+            return i, self.rank
 
          self.rank = newPageRank
          i += 1
@@ -94,14 +95,14 @@ def getData(fp):
       nodes = re.split(r',', line)
       nodes = [col.strip(' ' + string.punctuation) for col in nodes]
 
-      if int(nodes[1]) >= int(nodes[3]):
+      if int(nodes[1]) > int(nodes[3]):
          graph.addEdge(nodes[2], nodes[0])
       else:
          graph.addEdge(nodes[0], nodes[2])
 
    return graph
 
-def getDataWiki(fp):
+def getDataDirected(fp):
    """Create a PageRank graph from the file"""
    graph = PageRank()
    data = fp.read().splitlines()
@@ -120,14 +121,26 @@ if __name__ == '__main__':
    fname = sys.argv[1]
    fp = open(fname, 'r')
 
-   if fname == 'wiki-Vote.txt' or 'p2p-Gnutella05.txt' or 'amazon0505.txt':
-      graph = getDataWiki(fp)
+   start_graph = time.time()
+
+   if len(sys.argv) > 2:
+      if sys.argv[2] == '-d' or '--directed':
+         graph = getDataDirected(fp)
    else:
       graph = getData(fp)
 
-   print 'pageRanks:'
-   results = graph.getPageRank()
+   end_graph = time.time()
 
+   start_res = time.time()
+   i, results = graph.getPageRank()
+   end_res = time.time()
+
+   print "Read time: %f" % (end_graph - start_graph)
+   print "Processing time: %f" % (end_res - start_res)
+   print "Iterations until convergance: %i" % i
+   print
+
+   print "pageRanks:"
    i = 1
    for k, v in results:
       print "%i  obj: %s with PageRank: %f" % (i, k, v)
