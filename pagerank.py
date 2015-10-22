@@ -79,7 +79,8 @@ class PageRank:
 
          if (self.goodEnough(newPageRank, self.rank)):
             self.rank = newPageRank
-            return i, self.rank
+            self.rank = sorted(self.rank.items(), key=lambda x: x[1], reverse=True)[:40]
+            return self.rank
 
          self.rank = newPageRank
          i += 1
@@ -92,8 +93,6 @@ def getData(fp):
    for line in data:
       nodes = re.split(r',', line)
       nodes = [col.strip(' ' + string.punctuation) for col in nodes]
-      graph.addNode(nodes[0])
-      graph.addNode(nodes[2])
 
       if int(nodes[1]) >= int(nodes[3]):
          graph.addEdge(nodes[2], nodes[0])
@@ -102,15 +101,37 @@ def getData(fp):
 
    return graph
 
+def getDataWiki(fp):
+   """Create a PageRank graph from the file"""
+   graph = PageRank()
+   data = fp.read().splitlines()
+
+   for line in data:
+      if '#' in line:
+         continue 
+      else:
+         nodes = line.split()
+         graph.addEdge(int(nodes[0]), int(nodes[1]))
+
+   return graph
+
 
 if __name__ == '__main__':
    fname = sys.argv[1]
    fp = open(fname, 'r')
 
-   graph = getData(fp)
+   if fname == 'wiki-Vote.txt' or 'p2p-Gnutella05.txt' or 'amazon0505.txt':
+      graph = getDataWiki(fp)
+   else:
+      graph = getData(fp)
 
    print 'pageRanks:'
-   print graph.getPageRank()
+   results = graph.getPageRank()
+
+   i = 1
+   for k, v in results:
+      print "%i  obj: %s with PageRank: %f" % (i, k, v)
+      i += 1
 
 
 
