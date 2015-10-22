@@ -4,32 +4,27 @@ import string
 import sys
 
 def get_data(fp):
-	nodes = {}
 
 	data = fp.read().splitlines()
+
+	graph = {}
+
 	for line in data:
-		line = re.split(r',', line)
-		line = [col.strip(string.punctuation) for col in line]
-		nodes[line[0]] = (line[1], line[2])
-
-	#pprint.pprint(nodes)
-
+		nodes = re.split(r',', line)
+		nodes = [col.strip(' ' + string.punctuation) for col in nodes]
+		
+		if nodes[1] >= nodes[3]:
+			adj = graph.get(nodes[0], [])
+			adj.append(nodes[2])
+			graph[nodes[0]] = adj
+	pprint.pprint(graph)
 
 if __name__ == '__main__':
 	try: 
 		fname = sys.argv[1]
+		fp = open(fname, 'r')
+		get_data(fp)
 	except Exception:
 		print "usage: page_rank.py <file>"
 
-	#fp = open('NCAA_football.csv', 'r')
-	#data_ncaa = get_data(fp)
-	#fp.close()
-
-
-
-	"""fp = open('stateborders.csv', 'r')
-	data_borders = get_data(fp)
-	fp.close()
-	fp = open('karate.csv', 'r')
-	data_karate = get_data(fp)"""
 
