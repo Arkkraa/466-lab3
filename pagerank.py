@@ -44,6 +44,10 @@ class PageRank:
       """Return a list of destinations for source"""
       return self.destinations[source]
 
+   def getSources(self, source):
+      """Return a list of source nodes"""
+      return self.sources[source]
+
    def printGraph(self):
       """Print out the graph"""
 
@@ -135,6 +139,8 @@ if __name__ == '__main__':
    i, results = graph.getPageRank()
    end_res = time.time()
 
+   #graph.printGraph()
+
    print "Read time: %f" % (end_graph - start_graph)
    print "Processing time: %f" % (end_res - start_res)
    print "Iterations until convergance: %i" % i
@@ -143,7 +149,7 @@ if __name__ == '__main__':
    print "pageRanks:"
    i = 1
    for k, v in results:
-      print "%i  obj: %s with PageRank: %f" % (i, k, v)
+      print "%i  obj: %s with PageRank: %f indegree: %d outdegree: %d total: %d" % (i, k, v, len(graph.getSources(k)), graph.getDegree(k), len(graph.getSources(k)) + graph.getDegree(k))
       i += 1
 
 
